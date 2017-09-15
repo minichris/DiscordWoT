@@ -45,9 +45,10 @@ namespace DiscordWoT
             else if (message.Content.ToLower().StartsWith("!wotadd "))
             {
                 string WoTName = message.Content.ToLower().Replace("!wotadd ", "");
-                WoTUser UserObj = new WoTUser(message.Author, WoTName);
+                WoTUser UserObj = new WoTUser();
+                UserObj.AddNewWoTUser(message.Author, WoTName);
                 Console.WriteLine("Adding a new user.");
-                using (StreamWriter writer = File.CreateText("Users/" + UserObj.Id.ToString()))
+                using (StreamWriter writer = File.CreateText("Users/" + UserObj.DiscordId.ToString()))
                 {
                     await writer.WriteAsync(JsonConvert.SerializeObject(UserObj, Formatting.Indented));
                 }
