@@ -8,6 +8,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Collections.Generic;
+using System.Net;
+using Newtonsoft.Json.Linq;
 
 namespace DiscordWoT
 {
@@ -39,14 +41,14 @@ namespace DiscordWoT
 
         private async Task MessageReceived(SocketMessage message)
         {
-            if (message.Content.ToLower() == "!ping")
+            if (message.Content.ToLower() == "~ping")
             {
                 await message.DeleteAsync();
-                await message.Channel.SendMessageAsync("Pong!");
+                await message.Channel.SendMessageAsync("Pong~");
             }
-            else if (message.Content.ToLower().StartsWith("!wotadd "))
+            else if (message.Content.ToLower().StartsWith("~add "))
             {
-                string WoTName = message.Content.ToLower().Replace("!wotadd ", "");
+                string WoTName = message.Content.ToLower().Replace("~add ", "");
                 WoTUser UserObj = new WoTUser();
                 try
                 {
@@ -63,9 +65,29 @@ namespace DiscordWoT
                 }
                 await message.DeleteAsync();
             }
-            else if (message.Content.ToLower().StartsWith("!wotgetme"))
+            else if (message.Content.ToLower().StartsWith("~me"))
             {
                 await WotGetMeMessage(message);
+                await message.DeleteAsync();
+            }
+            else if (message.Content.ToLower().StartsWith("~sig"))
+            {
+                await WoTGetSignature(message);
+                await message.DeleteAsync();
+            }
+            else if (message.Content.ToLower().StartsWith("~help"))
+            {
+                EmbedBuilder EmbedObj = new EmbedBuilder();
+                EmbedObj.WithTitle("Help");
+                EmbedObj.AddField("~help", "Show this message.");
+                EmbedObj.AddField("~add <WoT Username>", "Add your WoT username.");
+                EmbedObj.AddField("~me", "Show some your player statistics. Can only be done after adding your WoT username.");
+                EmbedObj.AddField("~sig", "Show your stats signature. Can only be done after adding your WoT username.");
+                EmbedObj.WithDescription("All of my current commands.");
+                EmbedObj.WithThumbnailUrl("http://pm1.narvii.com/5594/735b6be3142f7afcd2a4805e580233bef4645477_hq.jpg");
+                EmbedObj.WithColor(Color.Magenta);
+                await message.Channel.SendMessageAsync("", false, EmbedObj);
+                await message.DeleteAsync();
             }
         }
 
@@ -76,6 +98,18 @@ namespace DiscordWoT
             string PlayerTreesCut = WoTUserObj.WotPlayerData["data"][WoTUserObj.WoTID.ToString()]["statistics"]["trees_cut"].ToString();
             string PlayerNickname = WoTUserObj.WotPlayerData["data"][WoTUserObj.WoTID.ToString()]["nickname"].ToString();
             InitiatorMessage.Channel.SendMessageAsync("Hello " + PlayerNickname + ", you have cut down " + PlayerTreesCut + " trees!");
+            return Task.CompletedTask;
+        }
+
+        private Task WoTGetSignature(SocketMessage InitiatorMessage)
+        {
+            string Json = File.ReadAllText("Users/" + InitiatorMessage.Author.Id.ToString());
+            WoTUser WoTUserObj = JsonConvert.DeserializeObject<WoTUser>(Json);
+            using (WebClient wc = new WebClient())
+            {
+                wc.DownloadFile("http://wotlabs.net/sig_cust/FFFFFF/36393e/eu/25g/200g/1000g/" + WoTUserObj.WotPlayerData["data"][WoTUserObj.WoTID.ToString()]["nickname"].ToString() + "/signature.png", "Users/" + WoTUserObj.WoTID + ".png");
+                InitiatorMessage.Channel.SendFileAsync("Users/" + WoTUserObj.WoTID + ".png");
+            }
             return Task.CompletedTask;
         }
 
