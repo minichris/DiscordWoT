@@ -6,6 +6,8 @@ using Discord.Net.Providers.WS4Net;
 using Newtonsoft.Json;
 using System.IO;
 using System.Linq;
+using System.Text;
+using System.Collections.Generic;
 
 namespace DiscordWoT
 {
@@ -46,22 +48,55 @@ namespace DiscordWoT
             {
                 string WoTName = message.Content.ToLower().Replace("!wotadd ", "");
                 WoTUser UserObj = new WoTUser();
-                UserObj.AddNewWoTUser(message.Author, WoTName);
-                Console.WriteLine("Adding a new user.");
-                using (StreamWriter writer = File.CreateText("Users/" + UserObj.DiscordId.ToString()))
+                try
                 {
-                    await writer.WriteAsync(JsonConvert.SerializeObject(UserObj, Formatting.Indented));
+                    await UserObj.AddNewWoTUser(message.Author, WoTName);
+                    using (StreamWriter writer = File.CreateText("Users/" + UserObj.DiscordId.ToString()))
+                    {
+                        await writer.WriteAsync(JsonConvert.SerializeObject(UserObj, Formatting.Indented));
+                    }
+                    await message.Channel.SendMessageAsync("Done!");
                 }
-                Console.WriteLine("Done adding a new user.");
+                catch
+                {
+                    await message.Channel.SendMessageAsync("Failed! Seems like that user doesn't exist :(");
+                }
                 await message.DeleteAsync();
-                await message.Channel.SendMessageAsync("Done!");
+            }
+            else if (message.Content.ToLower().StartsWith("!wotgetme"))
+            {
+                await WotGetMeMessage(message);
             }
         }
 
-        private Task SaveUserData()
+        private Task WotGetMeMessage(SocketMessage InitiatorMessage)
         {
-
+            string Json = File.ReadAllText("Users/" + InitiatorMessage.Author.Id.ToString());
+            WoTUser WoTUserObj = JsonConvert.DeserializeObject<WoTUser>(Json);
+            string PlayerTreesCut = WoTUserObj.WotPlayerData["data"][WoTUserObj.WoTID.ToString()]["statistics"]["trees_cut"].ToString();
+            string PlayerNickname = WoTUserObj.WotPlayerData["data"][WoTUserObj.WoTID.ToString()]["nickname"].ToString();
+            InitiatorMessage.Channel.SendMessageAsync("Hello " + PlayerNickname + ", you have cut down " + PlayerTreesCut + " trees!");
             return Task.CompletedTask;
+        }
+
+        private static async Task<string> ReadTextAsync(string filePath)
+        {
+            using (FileStream sourceStream = new FileStream(filePath,
+                FileMode.Open, FileAccess.Read, FileShare.Read,
+                bufferSize: 4096, useAsync: true))
+            {
+                StringBuilder sb = new StringBuilder();
+
+                byte[] buffer = new byte[0x1000];
+                int numRead;
+                while ((numRead = await sourceStream.ReadAsync(buffer, 0, buffer.Length)) != 0)
+                {
+                    string text = Encoding.Unicode.GetString(buffer, 0, numRead);
+                    sb.Append(text);
+                }
+
+                return sb.ToString();
+            }
         }
 
         private Task Log(LogMessage msg)
