@@ -1,4 +1,5 @@
-﻿using Discord.WebSocket;
+﻿using Discord.Net;
+using Discord.WebSocket;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;

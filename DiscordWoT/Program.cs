@@ -16,7 +16,9 @@ namespace DiscordWoT
     class Program
     {
         public static void Main(string[] args)
-            => new Program().MainAsync().GetAwaiter().GetResult();
+        {
+            new Program().MainAsync().GetAwaiter().GetResult();
+        }
 
         private DiscordSocketClient _client;
 
@@ -81,7 +83,7 @@ namespace DiscordWoT
                 EmbedObj.WithTitle("Help");
                 EmbedObj.AddField("~help", "Show this message.");
                 EmbedObj.AddField("~add <WoT Username>", "Add your WoT username.");
-                EmbedObj.AddField("~me", "Show some your player statistics. Can only be done after adding your WoT username.");
+                EmbedObj.AddField("~me", "Show some of your player statistics. Can only be done after adding your WoT username.");
                 EmbedObj.AddField("~sig", "Show your stats signature. Can only be done after adding your WoT username.");
                 EmbedObj.WithDescription("All of my current commands.");
                 EmbedObj.WithThumbnailUrl("http://pm1.narvii.com/5594/735b6be3142f7afcd2a4805e580233bef4645477_hq.jpg");
