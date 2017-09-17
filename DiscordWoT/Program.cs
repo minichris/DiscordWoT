@@ -15,7 +15,7 @@ namespace DiscordWoT
 {
     class Program
     {
-        static string VersionString = "0.1";
+        static string VersionString = "0.1.2";
 
         public static void Main(string[] args)
         {
@@ -38,7 +38,6 @@ namespace DiscordWoT
             string token = File.ReadLines("Token.txt").First(); // Remember to keep this private!
             await _client.LoginAsync(TokenType.Bot, token);
             await _client.StartAsync();
-
             // Block this task until the program is closed.
             await Task.Delay(-1);
         }
@@ -88,9 +87,9 @@ namespace DiscordWoT
                 EmbedObj.AddField("~me", "Show some of your player statistics. Can only be done after adding your WoT username.");
                 EmbedObj.AddField("~sig", "Show your stats signature. Can only be done after adding your WoT username.");
                 EmbedObj.WithDescription("All of my current commands.");
-                EmbedObj.WithThumbnailUrl("http://pm1.narvii.com/5594/735b6be3142f7afcd2a4805e580233bef4645477_hq.jpg");
+                EmbedObj.WithThumbnailUrl("http://i0.kym-cdn.com/photos/images/original/001/170/314/f3d.png");
                 EmbedObj.WithColor(Color.Magenta);
-                EmbedObj.WithFooter("Version " + VersionString, "http://www.nautiljon.com/images/perso/00/96/okamoto_hazuki_10769.jpg");
+                EmbedObj.WithFooter("Version " + VersionString, "https://vignette.wikia.nocookie.net/gup/images/d/d7/GUP_OoaraiSmall_9335.png");
                 await message.Channel.SendMessageAsync("", false, EmbedObj);
                 await message.DeleteAsync();
             }
