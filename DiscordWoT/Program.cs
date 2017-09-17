@@ -103,16 +103,17 @@ namespace DiscordWoT
             return Task.CompletedTask;
         }
 
-        private Task WoTGetSignature(SocketMessage InitiatorMessage)
+        private async Task WoTGetSignature(SocketMessage InitiatorMessage)
         {
             string Json = File.ReadAllText("Users/" + InitiatorMessage.Author.Id.ToString());
             WoTUser WoTUserObj = JsonConvert.DeserializeObject<WoTUser>(Json);
+            string Filename = "Users/" + WoTUserObj.WoTID + ".png";
             using (WebClient wc = new WebClient())
             {
-                wc.DownloadFile("http://wotlabs.net/sig_cust/FFFFFF/36393e/eu/25g/200g/1000g/" + WoTUserObj.WotPlayerData["data"][WoTUserObj.WoTID.ToString()]["nickname"].ToString() + "/signature.png", "Users/" + WoTUserObj.WoTID + ".png");
-                InitiatorMessage.Channel.SendFileAsync("Users/" + WoTUserObj.WoTID + ".png");
+                wc.DownloadFile("http://wotlabs.net/sig_cust/FFFFFF/36393e/eu/25g/200g/1000g/" + WoTUserObj.WotPlayerData["data"][WoTUserObj.WoTID.ToString()]["nickname"].ToString() + "/signature.png", Filename);
+                await InitiatorMessage.Channel.SendFileAsync(Filename);
+                File.Delete(Filename);
             }
-            return Task.CompletedTask;
         }
 
         private static async Task<string> ReadTextAsync(string filePath)
