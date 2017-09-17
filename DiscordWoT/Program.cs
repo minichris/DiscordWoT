@@ -15,6 +15,8 @@ namespace DiscordWoT
 {
     class Program
     {
+        static string VersionString = "0.1";
+
         public static void Main(string[] args)
         {
             new Program().MainAsync().GetAwaiter().GetResult();
@@ -88,6 +90,7 @@ namespace DiscordWoT
                 EmbedObj.WithDescription("All of my current commands.");
                 EmbedObj.WithThumbnailUrl("http://pm1.narvii.com/5594/735b6be3142f7afcd2a4805e580233bef4645477_hq.jpg");
                 EmbedObj.WithColor(Color.Magenta);
+                EmbedObj.WithFooter("Version " + VersionString, "http://www.nautiljon.com/images/perso/00/96/okamoto_hazuki_10769.jpg");
                 await message.Channel.SendMessageAsync("", false, EmbedObj);
                 await message.DeleteAsync();
             }
