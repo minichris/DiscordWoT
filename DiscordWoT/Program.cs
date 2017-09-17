@@ -38,6 +38,7 @@ namespace DiscordWoT
             string token = File.ReadLines("Token.txt").First(); // Remember to keep this private!
             await _client.LoginAsync(TokenType.Bot, token);
             await _client.StartAsync();
+            SetBotDetails();
             // Block this task until the program is closed.
             await Task.Delay(-1);
         }
@@ -116,6 +117,16 @@ namespace DiscordWoT
                 await InitiatorMessage.Channel.SendFileAsync(Filename);
                 File.Delete(Filename);
             }
+        }
+
+        private async Task SetBotDetails()
+        {
+            if (!File.Exists("icon.png"))
+            {
+                new WebClient().DownloadFile("https://worldoftanks.asia/dcont/fb/image/image_gupmod_01.png", "icon.png");
+            }
+            FileStream fileStreamer = new FileStream("icon.png", FileMode.Open);
+            await _client.CurrentUser.ModifyAsync(x => x.Avatar = new Image(fileStreamer));
         }
 
         private static async Task<string> ReadTextAsync(string filePath)
