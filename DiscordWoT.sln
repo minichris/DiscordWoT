@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.26730.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscordWoT", "DiscordWoT\DiscordWoT.csproj", "{7881D604-F9BC-4773-B626-E1403F7E5F3A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscordWoTCore", "DiscordWoTCore\DiscordWoTCore.csproj", "{6E8CAF25-0C92-4357-B985-3266A238086C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiscordWoTCore", "DiscordWoTCore\DiscordWoTCore.csproj", "{6E8CAF25-0C92-4357-B985-3266A238086C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

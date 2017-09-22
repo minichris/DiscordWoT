@@ -2,7 +2,9 @@
 using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
+#if !NETCOREAPP2_0
 using Discord.Net.Providers.WS4Net;
+#endif
 using Newtonsoft.Json;
 using System.IO;
 using System.Linq;
@@ -29,13 +31,15 @@ namespace DiscordWoT
             Directory.CreateDirectory("Users");
             _client = new DiscordSocketClient(new DiscordSocketConfig
             {
+#if !NETCOREAPP2_0
                 WebSocketProvider = WS4NetProvider.Instance
+#endif
             });
 
             _client.Log += Log;
             _client.MessageReceived += MessageReceived;
 
-            string token = File.ReadLines("Token.txt").First(); // Remember to keep this private!
+            string token = File.ReadLines(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location) + "/Token.txt").First(); // Remember to keep this private!
             await _client.LoginAsync(TokenType.Bot, token);
             await _client.StartAsync();
             SetBotDetails();

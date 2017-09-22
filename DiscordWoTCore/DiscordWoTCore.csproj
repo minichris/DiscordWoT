@@ -7,6 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="..\DiscordWoT\Program.cs" Link="Program.cs" />
+    <Compile Include="..\DiscordWoT\WoTUser.cs" Link="WoTUser.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="..\Token.txt" Link="Token.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Discord.Net" Version="1.0.2" />
   </ItemGroup>
 
