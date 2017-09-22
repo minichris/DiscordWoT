@@ -21,11 +21,6 @@ namespace DiscordWoT
         public ulong WoTID;
         public JObject WotPlayerData;
 
-        public WoTUser()
-        {
-
-        }
-
         public WoTUser(ulong GivenDiscordId) //Get a user from their discord ID provided they have an existing record on the server
         {
             if(File.Exists("Users/" + GivenDiscordId))
@@ -39,37 +34,27 @@ namespace DiscordWoT
             }
         }
 
-        public Task AddNewWoTUser(SocketUser DiscordUser, string GivenWoTName)
+        public WoTUser(SocketUser DiscordUser, string GivenWoTName)
         {
-            DiscordId = DiscordUser.Id;
-            DiscordUsername = DiscordUser.Username;
-            RetrieveWoTId(GivenWoTName);
-            Console.WriteLine("Retrieving {0}'s personal data.", GivenWoTName);
-            RetrieveWoTPersonalData();
-            return Task.CompletedTask;
+            DiscordId = DiscordUser.Id; //set this object's Discord User ID to the given one since we know its right
+            DiscordUsername = DiscordUser.Username; //set this object's Discord Username to the given one since we know its right
+            RetrieveWoTPlayerData(GivenWoTName);
         }
 
-        public Task RetrieveWoTId(string PlayerName)
+        private Task RetrieveWoTPlayerData(string PlayerName)
         {
             string OptionsString = @"account/list/?application_id=" + WargamingKey + "&search=" + PlayerName + "&type=exact";
-            using (WebClient wc = new WebClient())
+            string json = new WebClient().DownloadString(api + OptionsString);
+            dynamic JsonObject = JObject.Parse(json);
+            WoTID = JsonObject.data[0].account_id;
+            OptionsString = @"account/info/?application_id=" + WargamingKey + "&account_id=" + WoTID;
+            json = new WebClient().DownloadString(api + OptionsString);
+            WotPlayerData = JObject.Parse(json);
+            using (StreamWriter writer = File.CreateText("Users/" + DiscordId.ToString()))
             {
-                string json = wc.DownloadString(api + OptionsString);
-                dynamic JsonObject = JObject.Parse(json);
-                WoTID = JsonObject.data[0].account_id;
-                return Task.CompletedTask;
-            }            
-        }
-
-        private Task RetrieveWoTPersonalData()
-        {
-            string OptionsString = @"account/info/?application_id=" + WargamingKey + "&account_id=" + WoTID;
-            using (WebClient wc = new WebClient())
-            {
-                string json = wc.DownloadString(api + OptionsString);
-                WotPlayerData = JObject.Parse(json);
-                return Task.CompletedTask;
+                writer.Write(JsonConvert.SerializeObject(this, Formatting.Indented));
             }
+            return Task.CompletedTask;
         }
     }
 }

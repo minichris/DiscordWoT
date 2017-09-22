@@ -22,20 +22,19 @@ namespace DiscordWoT
             }
             else if (message.Content.ToLower().StartsWith("~add "))
             {
-                string WoTName = message.Content.ToLower().Replace("~add ", "");
-                WoTUser UserObj = new WoTUser();
+                string PossibleWoTName = message.Content.ToLower().Replace("~add ", "");
                 try
                 {
-                    await UserObj.AddNewWoTUser(message.Author, WoTName);
-                    using (StreamWriter writer = File.CreateText("Users/" + UserObj.DiscordId.ToString()))
-                    {
-                        await writer.WriteAsync(JsonConvert.SerializeObject(UserObj, Formatting.Indented));
-                    }
+                    WoTUser UserObj = new WoTUser(message.Author, PossibleWoTName);
                     await message.Channel.SendMessageAsync("Done!");
                 }
-                catch
+                catch(ArgumentOutOfRangeException)
                 {
-                    await message.Channel.SendMessageAsync("Failed! Seems like that user doesn't exist :(");
+                    await message.Channel.SendMessageAsync($"Failed! Seems like \"{PossibleWoTName}\" doesn't exist :(");
+                }
+                catch(Exception e)
+                {
+                    await message.Channel.SendMessageAsync(e.Message);
                 }
                 await message.DeleteAsync();
             }
