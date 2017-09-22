@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="..\DiscordWoT\Commands.cs" Link="Commands.cs" />
     <Compile Include="..\DiscordWoT\Program.cs" Link="Program.cs" />
     <Compile Include="..\DiscordWoT\WoTUser.cs" Link="WoTUser.cs" />
   </ItemGroup>

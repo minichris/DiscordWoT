@@ -21,6 +21,24 @@ namespace DiscordWoT
         public ulong WoTID;
         public JObject WotPlayerData;
 
+        public WoTUser()
+        {
+
+        }
+
+        public WoTUser(ulong GivenDiscordId) //Get a user from their discord ID provided they have an existing record on the server
+        {
+            if(File.Exists("Users/" + GivenDiscordId))
+            {
+                string Json = File.ReadAllText("Users/" + GivenDiscordId);
+                JsonConvert.PopulateObject(Json, this);
+            }
+            else
+            {
+                throw new ArgumentException("User lacks an existing record.");
+            }
+        }
+
         public Task AddNewWoTUser(SocketUser DiscordUser, string GivenWoTName)
         {
             DiscordId = DiscordUser.Id;
