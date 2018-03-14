@@ -91,7 +91,7 @@ namespace DiscordWoT
                 string Filename = "Users/" + WoTUserObj.WoTID + ".png";
                 using (WebClient wc = new WebClient())
                 {
-                    wc.DownloadFile("http://wotlabs.net/sig_cust/FFFFFF/36393e/eu/25g/200g/1000g/" + WoTUserObj.WotPlayerData["data"][WoTUserObj.WoTID.ToString()]["nickname"].ToString() + "/signature.png", Filename);
+                    wc.DownloadFile("http://wotlabs.net/sig_cust/FFFFFF/36393E/eu/" + WoTUserObj.WotPlayerData["data"][WoTUserObj.WoTID.ToString()]["nickname"].ToString() + "/signature.png", Filename);
                     await InitiatorMessage.Channel.SendFileAsync(Filename);
                     File.Delete(Filename);
                 }
