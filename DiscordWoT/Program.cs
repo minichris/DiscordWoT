@@ -18,9 +18,9 @@ namespace DiscordWoT
     partial class Program
     {
 #if NETCOREAPP2_0
-        static string VersionString = "0.1.4 .NET Core";
+        static string VersionString = "0.1.5 .NET Core";
 #else
-        static string VersionString = "0.1.4 .NET";
+        static string VersionString = "0.1.5 .NET";
 #endif
         public static string WargammingKey;
         public static void Main(string[] args)

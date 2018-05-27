@@ -70,7 +70,7 @@ namespace DiscordWoT
             try
             {
                 WoTUser WoTUserObj = new WoTUser(InitiatorMessage.Author.Id);
-                var PlayersData = WoTUserObj.WotPlayerData["data"][WoTUserObj.WoTID.ToString()];
+                var PlayersData = WoTUserObj.WoTPlayerPersonalData["data"][WoTUserObj.WoTID.ToString()];
                 string PlayerTreesCut = PlayersData["statistics"]["trees_cut"].ToString();
                 string PlayerNickname = PlayersData["nickname"].ToString();
                 InitiatorMessage.Channel.SendMessageAsync("Hello " + PlayerNickname + ", you have cut down " + PlayerTreesCut + " trees!");
@@ -91,7 +91,7 @@ namespace DiscordWoT
                 string Filename = "Users/" + WoTUserObj.WoTID + ".png";
                 using (WebClient wc = new WebClient())
                 {
-                    wc.DownloadFile("http://wotlabs.net/sig_cust/FFFFFF/36393E/eu/" + WoTUserObj.WotPlayerData["data"][WoTUserObj.WoTID.ToString()]["nickname"].ToString() + "/signature.png", Filename);
+                    wc.DownloadFile("http://wotlabs.net/sig_cust/FFFFFF/36393E/eu/" + WoTUserObj.WoTPlayerPersonalData["data"][WoTUserObj.WoTID.ToString()]["nickname"].ToString() + "/signature.png", Filename);
                     await InitiatorMessage.Channel.SendFileAsync(Filename);
                     File.Delete(Filename);
                 }
