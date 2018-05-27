@@ -300,5 +300,7 @@ __pycache__/
 
 # OpenCover UI analysis results
 OpenCover/
+
 DiscordWoT/Token.txt
 DiscordWoTCore/Token.txt
+Token.txt
