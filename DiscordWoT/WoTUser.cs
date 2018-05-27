@@ -14,7 +14,6 @@ namespace DiscordWoT
     class WoTUser
     {
         public static string api = @"https://api.worldoftanks.eu/wot/";
-        public static string WargamingKey = @"cece18ab7eb274e46c53ced7760b3e16";
 
         public ulong DiscordId;
         public string DiscordUsername;
@@ -43,11 +42,11 @@ namespace DiscordWoT
 
         private Task RetrieveWoTPlayerData(string PlayerName)
         {
-            string OptionsString = @"account/list/?application_id=" + WargamingKey + "&search=" + PlayerName + "&type=exact";
+            string OptionsString = @"account/list/?application_id=" + Program.WargammingKey + "&search=" + PlayerName + "&type=exact";
             string json = new WebClient().DownloadString(api + OptionsString);
             dynamic JsonObject = JObject.Parse(json);
             WoTID = JsonObject.data[0].account_id;
-            OptionsString = @"account/info/?application_id=" + WargamingKey + "&account_id=" + WoTID;
+            OptionsString = @"account/info/?application_id=" + Program.WargammingKey + "&account_id=" + WoTID;
             json = new WebClient().DownloadString(api + OptionsString);
             WotPlayerData = JObject.Parse(json);
             using (StreamWriter writer = File.CreateText("Users/" + DiscordId.ToString()))

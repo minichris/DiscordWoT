@@ -18,10 +18,11 @@ namespace DiscordWoT
     partial class Program
     {
 #if NETCOREAPP2_0
-        static string VersionString = "0.1.3 .NET Core";
+        static string VersionString = "0.1.4 .NET Core";
 #else
-        static string VersionString = "0.1.3 .NET";
+        static string VersionString = "0.1.4 .NET";
 #endif
+        public static string WargammingKey;
         public static void Main(string[] args)
         {
             new Program().MainAsync().GetAwaiter().GetResult();
@@ -42,8 +43,9 @@ namespace DiscordWoT
             _client.Log += Log;
             _client.MessageReceived += CommandReceived;
 
-            string token = File.ReadLines(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location) + "/Token.txt").First(); // Remember to keep this private!
-            await _client.LoginAsync(TokenType.Bot, token);
+            string DiscordToken = File.ReadLines(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location) + "/Token.txt").First(); // Remember to keep this private!
+            Program.WargammingKey = File.ReadLines(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location) + "/Token.txt").Last();
+            await _client.LoginAsync(TokenType.Bot, DiscordToken);
             await _client.StartAsync();
             SetBotDetails();
             // Block this task until the program is closed.
