@@ -1,6 +1,6 @@
 # DiscordWoT
 A discord bot that shows player and tank stats.
-##How to install (Linux)
+## How to install (Linux)
 With Dotnet installed, run:
 ```sh
 git clone https://github.com/minichris/DiscordWoT.git
