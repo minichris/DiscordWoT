@@ -27,6 +27,14 @@ namespace DiscordWoT
             {
                 string Json = File.ReadAllText(FileLocation(GivenDiscordId));
                 JsonConvert.PopulateObject(Json, this);
+
+                //if the players data is older then a day, reretrieve it!
+                Int32 unixTimestamp = (Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
+                if (unixTimestamp - (Int32)WoTPlayerPersonalData["data"][WoTID.ToString()]["updated_at"] > 86400)
+                {
+                    Console.WriteLine(DiscordUsername + "'s player data is outdated, getting a fresh copy now...");
+                    RetrieveWoTPlayerData((string)WoTPlayerPersonalData["data"][WoTID.ToString()]["nickname"]);
+                }
             }
             else
             {
