@@ -8,6 +8,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
 
 namespace DiscordWoT
 {
@@ -17,7 +18,7 @@ namespace DiscordWoT
         {
             if (message.Content.ToLower().StartsWith("~tanks"))
             {
-                await message.DeleteAsync();
+                message.DeleteAsync();
                 if (Int32.TryParse(message.Content.ToLower().Replace("~tanks ", ""), out int RequestedTier))
                 {
                     WoTUser WoTUserObj = new WoTUser(message.Author.Id);
@@ -27,12 +28,12 @@ namespace DiscordWoT
                 }
                 else
                 {
-                    await message.Channel.SendMessageAsync("Command usage: ~tanks <tier>");
+                    message.Channel.SendMessageAsync("Command usage: ~tanks <tier>");
                 }
             }
             else if (message.Content.ToLower() == "~ping")
             {
-                await message.DeleteAsync();
+                message.DeleteAsync();
                 await message.Channel.SendMessageAsync("Pong~");
             }
             else if (message.Content.ToLower().StartsWith("~add "))
@@ -51,17 +52,17 @@ namespace DiscordWoT
                 {
                     await message.Channel.SendMessageAsync(e.Message);
                 }
-                await message.DeleteAsync();
+                message.DeleteAsync();
             }
             else if (message.Content.ToLower().StartsWith("~me"))
             {
                 await WotGetMeMessage(message);
-                await message.DeleteAsync();
+                message.DeleteAsync();
             }
             else if (message.Content.ToLower().StartsWith("~sig"))
             {
                 await WoTGetSignature(message);
-                await message.DeleteAsync();
+                message.DeleteAsync();
             }
             else if (message.Content.ToLower().StartsWith("~help"))
             {
@@ -77,7 +78,7 @@ namespace DiscordWoT
                 EmbedObj.WithColor(Color.Magenta);
                 EmbedObj.WithFooter("Version " + VersionString, "https://vignette.wikia.nocookie.net/gup/images/d/d7/GUP_OoaraiSmall_9335.png");
                 await message.Channel.SendMessageAsync("", false, EmbedObj);
-                await message.DeleteAsync();
+                message.DeleteAsync();
             }
         }
 
