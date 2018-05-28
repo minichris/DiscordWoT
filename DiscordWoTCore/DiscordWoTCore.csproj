@@ -10,6 +10,7 @@
     <Compile Include="..\DiscordWoT\Commands.cs" Link="Commands.cs" />
     <Compile Include="..\DiscordWoT\Program.cs" Link="Program.cs" />
     <Compile Include="..\DiscordWoT\WoTUser.cs" Link="WoTUser.cs" />
+    <Compile Include="..\DiscordWoT\WoTTank.cs" Link="WoTTank.cs" />
   </ItemGroup>
 
   <ItemGroup>
