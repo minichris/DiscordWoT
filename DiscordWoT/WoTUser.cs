@@ -19,7 +19,7 @@ namespace DiscordWoT
         public string DiscordUsername;
         public ulong WoTID;
         public JObject WoTPlayerPersonalData;
-        public JObject WoTPlayerVehicles;
+        public JToken WoTPlayerVehicles;
 
         public WoTUser(ulong GivenDiscordId) //Get a user from their discord ID provided they have an existing record on the server
         {
@@ -44,6 +44,54 @@ namespace DiscordWoT
         private string FileLocation(ulong GivenDiscordId)
         {
             return "Users/" + GivenDiscordId.ToString() + ".json";
+        }
+
+        private string GetMasteryString(int MasteryBadge)
+        {
+            switch (MasteryBadge)
+            {
+                case 1:
+                    return "3rd Class";
+                case 2:
+                    return "2nd Class";
+                case 3:
+                    return "1st Class";
+                case 4:
+                    return "Ace Tanker";
+                default:
+                    return "None";
+            }
+        }
+
+        public List<string> TanksUserMastery(int Tier)
+        {
+            List<string> ReturnList = new List<string>();
+            foreach (JObject PlayerTank in WoTPlayerVehicles)
+            {
+                try
+                {
+                    WoTTank WoTTankObj = new WoTTank(Int32.Parse(PlayerTank["tank_id"].ToString()));
+
+                    //Check the tank still exists
+                    if (WoTTankObj.WoTTankData == null)
+                    {
+                        continue;
+                    }                    
+                    
+                    //if the tank is the same tier as the one we specified 
+                    if (Convert.ToInt16((string)WoTTankObj.WoTTankData["tier"]) == Tier)
+                    {
+                        ReturnList.Add(WoTTankObj.WoTTankData["name"] + " mastery: " + GetMasteryString((int)PlayerTank["mark_of_mastery"]));
+                    }   
+                }
+
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    Console.WriteLine("This error was found on tank number " + PlayerTank["tank_id"]);
+                }
+            }
+            return ReturnList;
         }
 
         private Task RetrieveWoTPlayerData(string PlayerName)
@@ -71,13 +119,14 @@ namespace DiscordWoT
                 }
 
                 //get the player vehicle data
-                OptionsString = @"account/tanks/?application_id=" + Program.WargammingKey + "&account_id=" + WoTID;
+                OptionsString = @"tanks/stats/?application_id=" + Program.WargammingKey + "&account_id=" + WoTID;
                 json = new WebClient().DownloadString(api + OptionsString);
-                WoTPlayerVehicles = JObject.Parse(json);
-                if (WoTPlayerVehicles["status"].ToString() == "error")
+                JObject ReturnedJSON = JObject.Parse(json);
+                if (ReturnedJSON["status"].ToString() == "error")
                 {
                     throw new Exception("Error in returned PlayerVehicles for player " + PlayerName);
                 }
+                WoTPlayerVehicles = ReturnedJSON["data"][WoTID.ToString()];
             }
             catch(Exception e)
             {

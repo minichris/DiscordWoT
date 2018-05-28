@@ -15,7 +15,22 @@ namespace DiscordWoT
     {
         private async Task CommandReceived(SocketMessage message)
         {
-            if (message.Content.ToLower() == "~ping")
+            if (message.Content.ToLower().StartsWith("~tanks"))
+            {
+                await message.DeleteAsync();
+                if (Int32.TryParse(message.Content.ToLower().Replace("~tanks ", ""), out int RequestedTier))
+                {
+                    WoTUser WoTUserObj = new WoTUser(message.Author.Id);
+                    await message.Channel.SendMessageAsync(WoTUserObj.WoTPlayerPersonalData["data"][WoTUserObj.WoTID.ToString()]["nickname"] + "'s tier " + RequestedTier + " tank mastery:");
+                    string outputmessage = string.Join("\n", WoTUserObj.TanksUserMastery(RequestedTier));
+                    await message.Channel.SendMessageAsync(outputmessage);
+                }
+                else
+                {
+                    await message.Channel.SendMessageAsync("Command usage: ~tanks <tier>");
+                }
+            }
+            else if (message.Content.ToLower() == "~ping")
             {
                 await message.DeleteAsync();
                 await message.Channel.SendMessageAsync("Pong~");
@@ -56,6 +71,7 @@ namespace DiscordWoT
                 EmbedObj.AddField("~add <WoT Username>", "Add your WoT username.");
                 EmbedObj.AddField("~me", "Show some of your player statistics. Can only be done after adding your WoT username.");
                 EmbedObj.AddField("~sig", "Show your stats signature. Can only be done after adding your WoT username.");
+                EmbedObj.AddField("~tanks <tier>", "Show your tank mastery. Can only be done after adding your WoT username.");
                 EmbedObj.WithDescription("All of my current commands.");
                 EmbedObj.WithThumbnailUrl("http://i0.kym-cdn.com/photos/images/original/001/170/314/f3d.png");
                 EmbedObj.WithColor(Color.Magenta);
