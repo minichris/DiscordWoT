@@ -12,15 +12,18 @@ using System.Text;
 using System.Collections.Generic;
 using System.Net;
 using Newtonsoft.Json.Linq;
+using Discord.Commands;
+using System.Reflection;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace DiscordWoT
 {
     partial class Program
     {
 #if NETCOREAPP2_0
-        static string VersionString = "0.1.6 .NET Core";
+        public static string VersionString = "0.1.7 .NET Core";
 #else
-        static string VersionString = "0.1.6 .NET";
+        public static string VersionString = "0.1.7 .NET";
 #endif
         public static string WargammingKey;
         public static void Main(string[] args)
@@ -29,6 +32,8 @@ namespace DiscordWoT
         }
 
         private DiscordSocketClient _client;
+        private CommandService commands;
+        private IServiceProvider services;
 
         public async Task MainAsync()
         {
@@ -39,9 +44,13 @@ namespace DiscordWoT
                 WebSocketProvider = WS4NetProvider.Instance
 #endif
             });
+            commands = new CommandService();
+
+            services = new ServiceCollection().BuildServiceProvider();
 
             _client.Log += Log;
-            _client.MessageReceived += CommandReceived;
+            _client.MessageReceived += HandleCommand;
+            await commands.AddModulesAsync(Assembly.GetEntryAssembly());
 
             string DiscordToken = File.ReadLines(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location) + "/Token.txt").First(); // Remember to keep this private!
             Program.WargammingKey = File.ReadLines(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location) + "/Token.txt").Last();

@@ -1,4 +1,5 @@
-﻿using Discord.Net;
+﻿using Discord;
+using Discord.Net;
 using Discord.WebSocket;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -43,6 +44,13 @@ namespace DiscordWoT
         }
 
         public WoTUser(SocketUser DiscordUser, string GivenWoTName)
+        {
+            DiscordId = DiscordUser.Id; //set this object's Discord User ID to the given one since we know its right
+            DiscordUsername = DiscordUser.Username; //set this object's Discord Username to the given one since we know its right
+            RetrieveWoTPlayerData(GivenWoTName);
+        }
+
+        public WoTUser(IUser DiscordUser, string GivenWoTName)
         {
             DiscordId = DiscordUser.Id; //set this object's Discord User ID to the given one since we know its right
             DiscordUsername = DiscordUser.Username; //set this object's Discord Username to the given one since we know its right
