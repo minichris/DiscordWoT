@@ -56,7 +56,7 @@ namespace DiscordWoT
         {
             try
             {
-                WoTUser WoTUserObj = new WoTUser(Context.Message.Author.Id);
+                WoTUser WoTUserObj = new WoTUser(Context.Message.Author.Id, Context);
                 string Filename = "Users/" + WoTUserObj.WoTID + ".png";
                 using (WebClient wc = new WebClient())
                 {
@@ -77,7 +77,7 @@ namespace DiscordWoT
         {
             try
             {
-                WoTUser WoTUserObj = new WoTUser(Context.Message.Author.Id);
+                WoTUser WoTUserObj = new WoTUser(Context.Message.Author.Id, Context);
                 var PlayersData = WoTUserObj.WoTPlayerPersonalData["data"][WoTUserObj.WoTID.ToString()];
                 string PlayerTreesCut = PlayersData["statistics"]["trees_cut"].ToString();
                 string PlayerNickname = PlayersData["nickname"].ToString();
@@ -113,7 +113,7 @@ namespace DiscordWoT
         {
             if (Int32.TryParse(tier, out int RequestedTier))
             {
-                WoTUser WoTUserObj = new WoTUser(Context.Message.Author.Id);
+                WoTUser WoTUserObj = new WoTUser(Context.Message.Author.Id, Context);
                 await Context.Message.Channel.SendMessageAsync(WoTUserObj.WoTPlayerPersonalData["data"][WoTUserObj.WoTID.ToString()]["nickname"] + "'s tier " + RequestedTier + " tank mastery:");
                 string outputmessage = string.Join("\n", WoTUserObj.TanksUserMastery(RequestedTier));
                 await Context.Message.Channel.SendMessageAsync(outputmessage);

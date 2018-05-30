@@ -1,4 +1,5 @@
 ﻿using Discord;
+using Discord.Commands;
 using Discord.Net;
 using Discord.WebSocket;
 using Newtonsoft.Json;
@@ -20,9 +21,10 @@ namespace DiscordWoT
         public string DiscordUsername;
         public ulong WoTID;
         public JObject WoTPlayerPersonalData;
-        public JObject WoTPlayerVehicles;
+        public JObject WoTPlayerVehiclesStats = new JObject();
+        public JObject WoTPlayerVehiclesAchievements = new JObject();
 
-        public WoTUser(ulong GivenDiscordId) //Get a user from their discord ID provided they have an existing record on the server
+        public WoTUser(ulong GivenDiscordId, ICommandContext ContextCaller = null) //Get a user from their discord ID provided they have an existing record on the server
         {
             if(File.Exists(FileLocation(GivenDiscordId)))
             {
@@ -82,7 +84,7 @@ namespace DiscordWoT
         public List<string> TanksUserMastery(int Tier)
         {
             List<string> ReturnList = new List<string>();
-            foreach (KeyValuePair<string, JToken> PlayerTank in WoTPlayerVehicles)
+            foreach (KeyValuePair<string, JToken> PlayerTank in WoTPlayerVehiclesStats)
             {
                 try
                 {
@@ -134,19 +136,32 @@ namespace DiscordWoT
                     throw new Exception("Error in returned PersonalData for player " + PlayerName);
                 }
 
-                //get the player vehicle data
+                //get the player vehicle stat data
                 OptionsString = @"tanks/stats/?application_id=" + Program.WargammingKey + "&account_id=" + WoTID;
                 json = new WebClient().DownloadString(api + OptionsString);
-                JObject ReturnedJSON = JObject.Parse(json);
-                if (ReturnedJSON["status"].ToString() == "error")
+                JObject ReturnedStatJSON = JObject.Parse(json);
+                if (ReturnedStatJSON["status"].ToString() == "error")
                 {
                     throw new Exception("Error in returned PlayerVehicles for player " + PlayerName);
                 }
-                JToken WoTPlayerVehiclesTemp = ReturnedJSON["data"][WoTID.ToString()];
-                WoTPlayerVehicles = new JObject();
-                foreach (JToken Vehicle in WoTPlayerVehiclesTemp)
+                JToken WoTPlayerVehiclesStatTemp = ReturnedStatJSON["data"][WoTID.ToString()];
+                foreach (JToken Vehicle in WoTPlayerVehiclesStatTemp)
                 {
-                    WoTPlayerVehicles.Add(Vehicle["tank_id"].ToString(), Vehicle);
+                    WoTPlayerVehiclesStats.Add(Vehicle["tank_id"].ToString(), Vehicle);
+                }
+
+                //get the player vehicle achievement data
+                OptionsString = @"tanks/achievements/?application_id=" + Program.WargammingKey + "&account_id=" + WoTID;
+                json = new WebClient().DownloadString(api + OptionsString);
+                JObject ReturnedAchievementJSON = JObject.Parse(json);
+                if (ReturnedAchievementJSON["status"].ToString() == "error")
+                {
+                    throw new Exception("Error in returned PlayerVehicles for player " + PlayerName);
+                }
+                JToken WoTPlayerVehiclesAchivementTemp = ReturnedAchievementJSON["data"][WoTID.ToString()];
+                foreach (JToken Vehicle in WoTPlayerVehiclesAchivementTemp)
+                {
+                    WoTPlayerVehiclesAchievements.Add(Vehicle["tank_id"].ToString(), Vehicle);
                 }
             }
             catch(Exception e)
