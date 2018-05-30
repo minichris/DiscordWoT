@@ -20,7 +20,7 @@ namespace DiscordWoT
         public string DiscordUsername;
         public ulong WoTID;
         public JObject WoTPlayerPersonalData;
-        public JToken WoTPlayerVehicles;
+        public JObject WoTPlayerVehicles;
 
         public WoTUser(ulong GivenDiscordId) //Get a user from their discord ID provided they have an existing record on the server
         {
@@ -82,11 +82,11 @@ namespace DiscordWoT
         public List<string> TanksUserMastery(int Tier)
         {
             List<string> ReturnList = new List<string>();
-            foreach (JObject PlayerTank in WoTPlayerVehicles)
+            foreach (KeyValuePair<string, JToken> PlayerTank in WoTPlayerVehicles)
             {
                 try
                 {
-                    WoTTank WoTTankObj = new WoTTank(Int32.Parse(PlayerTank["tank_id"].ToString()));
+                    WoTTank WoTTankObj = new WoTTank(Int32.Parse(PlayerTank.Key));
 
                     //Check the tank still exists
                     if (WoTTankObj.WoTTankData == null)
@@ -97,14 +97,14 @@ namespace DiscordWoT
                     //if the tank is the same tier as the one we specified 
                     if (Convert.ToInt16((string)WoTTankObj.WoTTankData["tier"]) == Tier)
                     {
-                        ReturnList.Add(WoTTankObj.WoTTankData["name"] + " mastery: " + GetMasteryString((int)PlayerTank["mark_of_mastery"]));
+                        ReturnList.Add(WoTTankObj.WoTTankData["name"] + " mastery: " + GetMasteryString((int)PlayerTank.Value["mark_of_mastery"]));
                     }   
                 }
 
                 catch (Exception e)
                 {
                     Console.WriteLine(e);
-                    Console.WriteLine("This error was found on tank number " + PlayerTank["tank_id"]);
+                    Console.WriteLine("This error was found on tank number " + PlayerTank.Key);
                 }
             }
             return ReturnList;
@@ -142,7 +142,12 @@ namespace DiscordWoT
                 {
                     throw new Exception("Error in returned PlayerVehicles for player " + PlayerName);
                 }
-                WoTPlayerVehicles = ReturnedJSON["data"][WoTID.ToString()];
+                JToken WoTPlayerVehiclesTemp = ReturnedJSON["data"][WoTID.ToString()];
+                WoTPlayerVehicles = new JObject();
+                foreach (JToken Vehicle in WoTPlayerVehiclesTemp)
+                {
+                    WoTPlayerVehicles.Add(Vehicle["tank_id"].ToString(), Vehicle);
+                }
             }
             catch(Exception e)
             {
