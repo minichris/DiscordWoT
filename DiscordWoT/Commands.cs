@@ -16,7 +16,7 @@ namespace DiscordWoT
 {
     public class Info : ModuleBase
     {
-        // ~say hello -> hello
+        // &say hello -> hello
         [Command("say"), Summary("Echos a message.")]
         public async Task Say([Remainder, Summary("The text to echo")] string echo)
         {
@@ -24,7 +24,7 @@ namespace DiscordWoT
                 await ReplyAsync(echo);
         }
 
-        // ~add
+        // &add
         [Command("add"), Summary("Adds a players WoT.")]
         public async Task Add([Remainder, Summary("The player's WoT name.")] string Nickname)
         {
@@ -43,14 +43,14 @@ namespace DiscordWoT
             }
         }
 
-        // ~ping -> pong
+        // &ping -> pong
         [Command("ping"), Summary(@"Replies with 'Pong!'.")]
         public async Task Ping()
         {
             await ReplyAsync("Pong!");
         }
 
-        // ~sig
+        // &sig
         [Command("sig"), Summary(@"Get the player's signature.")]
         public async Task Sig()
         {
@@ -67,11 +67,11 @@ namespace DiscordWoT
             }
             catch (ArgumentException)
             {
-                await Context.Message.Channel.SendMessageAsync("You need to register yourself with the ~add command. See ~help for usage details.");
+                await Context.Message.Channel.SendMessageAsync("You need to register yourself with the &add command. See &help for usage details.");
             }
         }
 
-        // ~me
+        // &me
         [Command("me"), Summary("Shows how many trees the player has cut down.")]
         public async Task Me()
         {
@@ -85,21 +85,21 @@ namespace DiscordWoT
             }
             catch (ArgumentException)
             {
-                Context.Message.Channel.SendMessageAsync("You need to register yourself with the ~add command. See ~help for usage details.");
+                Context.Message.Channel.SendMessageAsync("You need to register yourself with the &add command. See &help for usage details.");
             }
         }
 
-        // ~help
+        // &help
         [Command("help"), Summary(@"Shows the help dialogue.")]
         public async Task Help()
         {
             EmbedBuilder EmbedObj = new EmbedBuilder();
             EmbedObj.WithTitle("Help");
-            EmbedObj.AddField("~help", "Show this message.");
-            EmbedObj.AddField("~add <WoT Username>", "Add your WoT username.");
-            EmbedObj.AddField("~me", "Show some of your player statistics. Can only be done after adding your WoT username.");
-            EmbedObj.AddField("~sig", "Show your stats signature. Can only be done after adding your WoT username.");
-            EmbedObj.AddField("~tanks <tier>", "Show your tank mastery. Can only be done after adding your WoT username.");
+            EmbedObj.AddField("&help", "Show this message.");
+            EmbedObj.AddField("&add <WoT Username>", "Add your WoT username.");
+            EmbedObj.AddField("&me", "Show some of your player statistics. Can only be done after adding your WoT username.");
+            EmbedObj.AddField("&sig", "Show your stats signature. Can only be done after adding your WoT username.");
+            EmbedObj.AddField("&tanks <tier>", "Show your tank mastery. Can only be done after adding your WoT username.");
             EmbedObj.WithDescription("All of my current commands.");
             EmbedObj.WithThumbnailUrl("http://i0.kym-cdn.com/photos/images/original/001/170/314/f3d.png");
             EmbedObj.WithColor(Color.Magenta);
@@ -107,7 +107,7 @@ namespace DiscordWoT
             await Context.Message.Channel.SendMessageAsync("", false, EmbedObj);
         }
 
-        // ~tanks
+        // &tanks
         [Command("tanks"), Summary("Shows player tank masteries.")]
         public async Task Tanks([Remainder, Summary("The text to echo")] string tier)
         {
@@ -120,7 +120,7 @@ namespace DiscordWoT
             }
             else
             {
-                Context.Message.Channel.SendMessageAsync("Command usage: ~tanks <tier>");
+                Context.Message.Channel.SendMessageAsync("Command usage: &tanks <tier>");
             }
         }
     }
@@ -132,7 +132,7 @@ namespace DiscordWoT
             var message = messageParam as SocketUserMessage;
             if (message == null) return;
             int argPos = 0;
-            if (!(message.HasCharPrefix('~', ref argPos) || message.HasMentionPrefix(_client.CurrentUser, ref argPos))) return;
+            if (!(message.HasCharPrefix('&', ref argPos) || message.HasMentionPrefix(_client.CurrentUser, ref argPos))) return;
             var context = new CommandContext(_client, message);
             message.DeleteAsync();
             var result = await commands.ExecuteAsync(context, argPos, services);
